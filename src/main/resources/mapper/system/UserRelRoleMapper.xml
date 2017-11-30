@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wyj.dao.system.UserRelRoleMapper">
+	<insert id="save"  parameterType="hashmap"> 
+		INSERT INTO s_auth_userrelrole (userId,roleId)
+		VALUES
+		<foreach collection="roles" item="roleId" index="index" separator="," >
+		(
+			#{userId}, 
+			#{roleId}
+		)
+		</foreach>
+	</insert>
+	
+	<delete id="removeByUserId">
+		DELETE
+		FROM
+			s_auth_userrelrole
+		WHERE
+			userId = #{value}
+	</delete>
+
+	<delete id="batchRemoveByUserId">
+		DELETE
+		FROM
+			s_auth_userrelrole
+		WHERE
+			userId IN
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</delete>
+
+	<delete id="batchRemoveByRoleId">
+		DELETE
+		FROM
+			s_auth_userrelrole
+		WHERE
+			userId IN
+		<foreach item="roleId" collection="array" open="(" separator="," close=")">
+			#{roleId}
+		</foreach>
+	</delete>
+	
+	<select id="listRoleIdByUserId" resultType="long">
+		SELECT
+			roleId
+		FROM
+			s_auth_userrelrole
+		WHERE
+			userId = #{value}
+	</select>
+	<resultMap type="com.wyj.entity.system.UserRelRole" id="userRelRoleMap">
+		<id property="userRelRoleId" column="userRelRoleId" />
+		<result property="userId" column="userId" />
+		<result property="roleId" column="roleId" />
+	</resultMap>
+</mapper>

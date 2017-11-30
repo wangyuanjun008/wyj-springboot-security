@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wyj.dao.system.MenuMapper">
+	<select id="getObjectById" parameterType="java.lang.Long"
+		resultMap="menuList">
+		SELECT * FROM s_auth_menu t WHERE t.menuId=#{value}
+	</select>
+	
+	<select id="countMenuChildren" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			s_auth_menu
+		WHERE
+			parentId = #{value}
+	</select>	
+	
+	<insert id="save" parameterType="com.wyj.entity.system.Menu">
+		INSERT INTO
+		s_auth_menu(parentId,name,url,perms,type,orderNum,
+		isUse,createTime,createUserId)
+		VALUES
+		(#{parentId},#{name},#{url},#{perms},#{type},#{orderNum},#{isUse},#{createTime,jdbcType=DATE},#{createUserId})
+	</insert>
+	<delete id="remove" parameterType="java.lang.Long">
+		DELETE FROM
+		s_auth_menu WHERE
+		menuId=#{value}
+	</delete>
+	
+	<delete id="batchRemove" parameterType="java.lang.Long">
+		DELETE FROM
+		s_auth_menu WHERE
+		menuId IN
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<update id="update" parameterType="com.wyj.entity.system.Menu">
+		UPDATE s_auth_menu
+		SET
+		parentId =
+		#{parentId},name=#{name},url=#{url},perms=#{perms},type=#{type},orderNum=#{orderNum},isUse=#{isUse},modifyTime=#{modifyTime,jdbcType=DATE},modifyUserId=#{modifyUserId}
+		WHERE menuId=#{menuId}
+	</update>
+	
+	<select id="list" resultType="com.wyj.entity.system.Menu" parameterType="com.wyj.entity.system.Menu"> 
+		SELECT 
+		t1.menuId,
+		t1.parentId,
+		(SELECT t2.name FROM s_auth_menu t2 WHERE t2.menuId=t1.parentId) AS parentName,
+		t1.name,
+		t1.url,
+		t1.perms,
+		t1.type,
+		t1.orderNum,
+		t1.isUse,
+		t1.createTime,
+		t1.createUserId,
+		t1.modifyTime,
+		t1.modifyUserId
+		FROM s_auth_menu t1
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="parentId != null">
+				AND t1.parentId = #{parentId}
+			</if>
+			<if test="type != null">
+				AND t1.type = #{type}
+			</if>
+		</trim>		
+		ORDER BY t1.orderNum ASC
+	</select>	
+	
+	<select id="listNotButton" resultType="com.wyj.entity.system.Menu" parameterType="com.wyj.entity.system.Menu">
+		SELECT 
+		t1.menuId,
+		t1.parentId,
+		(SELECT t2.name FROM s_auth_menu t2 WHERE t2.menuId=t1.parentId) AS parentName,
+		t1.name,
+		t1.url,
+		t1.perms,
+		t1.type,
+		t1.orderNum,
+		t1.isUse,
+		t1.createTime,
+		t1.createUserId,
+		t1.modifyTime,
+		t1.modifyUserId
+		FROM s_auth_menu t1
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="parentId != null">
+				AND t1.parentId = #{parentId}
+			</if>
+			AND t1.type != 2
+		</trim>			
+			
+		ORDER BY
+			t1.orderNum ASC
+	</select>
+	
+	<select id="listMenuPermsByUserId" parameterType="long" resultType="string">
+		SELECT DISTINCT
+			t3.perms
+		FROM
+			s_auth_userrelrole t1
+		LEFT JOIN s_auth_rolerelmenu t2 ON t1.roleId = t2.roleId
+		LEFT JOIN s_auth_menu t3 ON t2.menuId = t3.menuId
+		WHERE
+			t1.userId = #{value}
+	</select>
+		
+	<select id="listAllMenuIdByUserId" resultType="long">
+		SELECT DISTINCT
+			t2.menuId
+		FROM
+			s_auth_userrelrole t1
+		LEFT JOIN s_auth_rolerelmenu t2 ON t1.roleId = t2.roleId
+		WHERE
+			t1.userId = #{value}
+	</select>		
+		
+	<resultMap type="com.wyj.entity.system.Menu" id="menuList">
+		<id property="menuId" column="menuId" />
+		<result property="parentId" column="parentId" />
+		<result property="name" column="name" />
+		<result property="url" column="url" />
+		<result property="perms" column="perms" />
+		<result property="type" column="type" />
+		<result property="orderNum" column="orderNum" />
+		<result property="isUse" column="is_use" />
+		<result property="createTime" jdbcType="DATE" javaType="java.util.Date" column="createTime" />
+		<result property="createUserId" column="createUserId" />
+		<result property="modifyTime" jdbcType="DATE" javaType="java.util.Date" column="modifyTime" />
+		<result property="modifyUserId" column="modifyUserId" />
+	</resultMap>
+
+</mapper>

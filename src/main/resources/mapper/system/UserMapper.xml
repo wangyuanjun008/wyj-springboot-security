@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wyj.dao.system.UserMapper">
+	<select id="getObjectById" parameterType="java.lang.Long"
+		resultType="com.wyj.entity.system.User">
+		SELECT * FROM s_auth_user WHERE
+		userId=#{value}
+	</select>
+	<select id="getUserByUserName" parameterType="java.lang.String" resultType="com.wyj.entity.system.User">
+		SELECT *
+		FROM
+			s_auth_user
+		WHERE
+			userName = #{value}
+	</select>	
+	
+	<insert id="save" parameterType="com.wyj.entity.system.User" useGeneratedKeys="true" keyProperty="userId">
+		INSERT INTO
+		s_auth_user(userName,password,name,sex,phone,email,address)
+		VALUES
+		(#{userName},#{password},#{name},#{sex},#{phone},#{email},#{address})
+	</insert>
+	<delete id="remove" parameterType="java.lang.Long">
+		DELETE FROM s_auth_user WHERE
+		userId=#{value}
+	</delete>
+
+	<delete id="batchRemove">
+		DELETE
+		FROM
+			s_auth_user
+		WHERE
+			userId IN
+		<foreach item="userId" collection="array" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</delete>
+
+	<update id="update" parameterType="com.wyj.entity.system.User">
+		UPDATE s_auth_user SET
+		userName=#{userName},password=#{password},name=#{name},sex=#{sex},phone=#{phone},email=#{email},address=#{address}
+		WHERE userId = #{userId}
+	</update>
+	
+	<update id="updatePasswordByUser">
+		UPDATE s_auth_user SET
+		password=#{newPassword}
+		WHERE userId = #{userId} AND password = #{oldPassword}
+	</update>
+	
+	<select id="list" parameterType="com.wyj.entity.system.User"
+		resultMap="userMap">
+		SELECT * FROM s_auth_user
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="userName != null">
+				AND userName = #{userName}
+			</if>
+			<if test="password != null">
+				AND password = #{password}
+			</if>
+		</trim>
+	</select>
+	<resultMap type="com.wyj.entity.system.User" id="userMap">
+		<id property="userId" column="userId" />
+		<result property="userName" column="userName" />
+		<result property="password" column="password" />
+		<result property="name" column="name" />
+		<result property="sex" column="sex" />
+		<result property="phone" column="phone" />
+		<result property="email" column="email" />
+		<result property="address" column="address" />
+	</resultMap>
+	
+<!-- 	<resultMap type="com.wyj.entity.system.User" id="userRoleMap" extends="userMap"> -->
+<!-- 		<collection property="roles" ofType="com.wyj.entity.auth.Role" resultMap="com.wyj.dao.auth.RoleDao.roleMap"></collection> -->
+<!-- 	</resultMap> -->
+</mapper>

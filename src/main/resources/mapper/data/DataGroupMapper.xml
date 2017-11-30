@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wyj.dao.data.DataGroupMapper">
+	<select id="getObjectById" parameterType="java.lang.Long" resultType="com.wyj.entity.data.DataGroup">
+		SELECT * FROM b_bd_datagroup WHERE
+		groupId=#{value}
+	</select>
+	<insert id="save" parameterType="com.wyj.entity.data.DataGroup">
+		INSERT INTO b_bd_datagroup(groupCode,groupName,remark,status,parentId) 
+		VALUES (#{groupCode},#{groupName},#{remark},#{status},#{parentId})
+	</insert>
+	<delete id="remove" parameterType="java.lang.Long">
+		DELETE FROM b_bd_datagroup WHERE
+		groupId=#{value}
+	</delete>
+	<delete id="batchRemove">
+		DELETE FROM b_bd_datagroup WHERE
+		groupId IN 
+		<foreach item="groupId" collection="array" open="(" separator="," close=")">
+			#{groupId}
+		</foreach>		
+	</delete>
+
+	<update id="update" parameterType="com.wyj.entity.data.DataGroup">
+		UPDATE b_bd_datagroup
+		SET groupCode = #{groupCode},groupName=#{groupName},remark=#{remark},status=#{status},parentId=#{parentId} WHERE groupId=#{groupId}
+	</update>
+	<select id="list" resultMap="dataGroupList">
+		SELECT * FROM b_bd_datagroup WHERE groupId != 0
+	</select>
+	<resultMap type="com.wyj.entity.data.DataGroup" id="dataGroupList">
+		<id property="groupId" column="groupId" />
+		<result property="groupCode" column="groupCode" />
+		<result property="groupName" column="groupName" />
+		<result property="remark" column="remark" />
+		<result property="status" column="status" />
+		<result property="parentId" column="parentId" />
+	</resultMap>
+</mapper>

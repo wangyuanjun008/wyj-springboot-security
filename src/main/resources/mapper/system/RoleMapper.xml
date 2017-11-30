@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wyj.dao.system.RoleMapper">
+	<select id="getObjectById" parameterType="java.lang.Long"
+		resultType="com.wyj.entity.system.Role">
+		SELECT roleId,roleName,roleSign,remake FROM s_auth_role WHERE
+		roleId=#{value}
+	</select>
+	<insert id="save" parameterType="com.wyj.entity.system.Role">
+		INSERT INTO
+		s_auth_role(roleName,roleSign,remake,createTime,createUserId)
+		VALUES
+		(#{roleName},#{roleSign},#{remake},#{createTime,jdbcType=DATE},#{createUserId})
+	</insert>
+	<delete id="remove" parameterType="java.lang.Long">
+		DELETE FROM s_auth_role WHERE
+		roleId=#{value}
+	</delete>
+
+	<update id="update" parameterType="com.wyj.entity.system.Role">
+		UPDATE s_auth_role SET
+		roleName=#{roleName},roleSign=#{roleSign},remake=#{remake},modifyTime=#{modifyTime,jdbcType=DATE},modifyUserId=#{modifyUserId}
+		WHERE roleId = #{value}
+	</update>
+	<select id="list" parameterType="com.wyj.entity.system.Role"
+		resultMap="roleMap">
+		SELECT * FROM s_auth_role
+	</select>
+	
+	<select id="listRoleSignByUserId" parameterType="long" resultType="string">
+		SELECT DISTINCT
+			t2.roleSign 
+		FROM
+			s_auth_userrelrole t1
+		LEFT JOIN s_auth_role t2 ON t1.roleId = t2.roleId
+		LEFT JOIN s_auth_user t3 ON t1.userId = t3.userId
+		WHERE
+			t3.userId = #{value}
+	</select>	
+	
+	<resultMap type="com.wyj.entity.system.Role" id="roleMap">
+		<id property="roleId" column="roleId" />
+		<result property="roleName" column="roleName" />
+		<result property="roleSign" column="roleSign" />
+		<result property="remake" column="remake" />
+		<result property="createTime" jdbcType="DATE" javaType="java.util.Date" column="createTime" />
+		<result property="createUserId" column="createUserId" />
+		<result property="modifyTime" jdbcType="DATE" javaType="java.util.Date" column="modifyTime" />
+		<result property="modifyUserId" column="modifyUserId" />
+<!-- 		<collection property="users" ofType="com.wyj.entity.system.User" resultMap="com.wyj.dao.system.UserDao.userMap"></collection> -->
+<!-- 		<collection property="auths" ofType="com.wyj.entity.system.Auth" resultMap="com.wyj.dao.system.AuthDao.authMap"></collection> -->
+	</resultMap>
+	
+<!-- 	<resultMap type="com.wyj.entity.system.Role" id="roleUserMap" extends="roleMap"> -->
+<!-- 		<collection property="users" ofType="com.wyj.entity.auth.User" resultMap="com.wyj.dao.auth.UserDao.userMap"></collection> -->
+<!-- 	</resultMap> -->
+</mapper>
