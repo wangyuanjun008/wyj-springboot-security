@@ -9,12 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
@@ -30,7 +29,7 @@ import com.wyj.service.data.DataGroupService;
  * @author：WangYuanJun
  * @date：2017年11月22日 下午8:25:35
  */
-@Controller
+@RestController
 @RequestMapping(value = "/dataGroup")
 public class DataGroupController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -41,12 +40,6 @@ public class DataGroupController {
     @Resource
     private RedisTemplate<String, DataGroup> redisTemplate;
     
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    private String index() {
-        return "/data/dataGroup";
-    }
-
-    @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public String query(@RequestParam(value = "offset", required = true, defaultValue = "1") Integer page, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer pageSize) {
         PageHelper.startPage(page, pageSize);
@@ -55,7 +48,6 @@ public class DataGroupController {
         return JSON.toJSONString(pageInfo.getList());
     }
 
-    @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public Retval save(DataGroup dataGroup) {
         Retval retval = Retval.newInstance();
@@ -74,7 +66,6 @@ public class DataGroupController {
         return retval;
     }
 
-    @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Retval edit(@PathVariable String id) {
         Retval retval = Retval.newInstance();
@@ -88,7 +79,6 @@ public class DataGroupController {
         return retval;
     }
 
-    @ResponseBody
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
     public Retval remove(@RequestParam Long[] ids) {
         Retval retval = Retval.newInstance();
