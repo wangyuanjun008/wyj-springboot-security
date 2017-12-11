@@ -5,12 +5,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
@@ -26,25 +26,19 @@ import com.wyj.service.system.MenuService;
  * @author：WangYuanJun
  * @date：2017年11月22日 下午8:25:35
  */
-@Controller
-@RequestMapping(value = "/menu")
+@RestController
+@RequestMapping(value = "/remote/menu")
 public class MenuController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private MenuService menuService;
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    private String index() {
-        return "/menu/menu";
-    }
-
-    @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public String query(@RequestParam(value = "offset", required = true, defaultValue = "1") Integer page, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer pageSize, Long parentId) {
         PageHelper.startPage(page, pageSize);
         if(parentId == null){
-            return null;
+            parentId = -1l;
         }
         List<Menu> menus = null;
         Menu menu = new Menu();

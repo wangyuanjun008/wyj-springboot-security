@@ -12,12 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
@@ -37,7 +35,7 @@ import com.wyj.service.data.DataGroupService;
  * @date：2017年11月22日 下午8:25:35
  */
 @RestController
-@RequestMapping(value = "/dataDict")
+@RequestMapping(value = "/remote/dataDict")
 public class DataDictController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -51,12 +49,13 @@ public class DataDictController {
     private RedisTemplate<String, DataDict> redisTemplate;
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public String query(@RequestParam(value = "offset", required = true, defaultValue = "1") Integer page, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer pageSize, Long dataGroupId) {
+    public String query(@RequestParam(value = "offset", required = true, defaultValue = "1") Integer page, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer pageSize, Long dataGroupId, String dictCode) {
         if (dataGroupId == null) {
-            return null;
+            dataGroupId = -1l;
         }
         PageHelper.startPage(page, pageSize);
         DataDict dataDict = new DataDict();
+        dataDict.setDictCode(dictCode);
         DataGroup dataGroup = new DataGroup();
         dataGroup.setGroupId(dataGroupId);
         dataDict.setDataGroup(dataGroup);

@@ -30,7 +30,7 @@ import com.wyj.service.data.DataGroupService;
  * @date：2017年11月22日 下午8:25:35
  */
 @RestController
-@RequestMapping(value = "/dataGroup")
+@RequestMapping(value = "/remote/dataGroup")
 public class DataGroupController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -39,9 +39,9 @@ public class DataGroupController {
 
     @Resource
     private RedisTemplate<String, DataGroup> redisTemplate;
-    
+
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public String query(@RequestParam(value = "offset", required = true, defaultValue = "1") Integer page, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer pageSize) {
+    public String query(@RequestParam(value = "offset", required = true, defaultValue = "1") Integer page, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer pageSize, Long dataGroupId) {
         PageHelper.startPage(page, pageSize);
         List<DataGroup> dataGroups = dataGroupService.list();
         PageInfo<DataGroup> pageInfo = new PageInfo<DataGroup>(dataGroups);
@@ -52,14 +52,14 @@ public class DataGroupController {
     public Retval save(DataGroup dataGroup) {
         Retval retval = Retval.newInstance();
         try {
-            if(dataGroup.getGroupId() == null){
+            if (dataGroup.getGroupId() == null) {
                 dataGroup.setParentId(0L);
                 dataGroupService.save(dataGroup);
-            }else{
+            } else {
                 dataGroupService.update(dataGroup);
             }
             ValueOperations<String, DataGroup> valueOperations = redisTemplate.opsForValue();
-            valueOperations.set("dataGroup"+dataGroup.getGroupId(), dataGroup);
+            valueOperations.set("dataGroup" + dataGroup.getGroupId(), dataGroup);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -69,10 +69,10 @@ public class DataGroupController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Retval edit(@PathVariable String id) {
         Retval retval = Retval.newInstance();
-        if(redisTemplate.hasKey("dataGroup"+id)){
-            DataGroup dataGroup = redisTemplate.opsForValue().get("dataGroup"+id);
+        if (redisTemplate.hasKey("dataGroup" + id)) {
+            DataGroup dataGroup = redisTemplate.opsForValue().get("dataGroup" + id);
             retval.put("obj", dataGroup);
-        }else{
+        } else {
             DataGroup dataGroup = dataGroupService.getObjectById(Long.valueOf(id));
             retval.put("obj", dataGroup);
         }
@@ -85,7 +85,7 @@ public class DataGroupController {
         try {
             dataGroupService.batchRemoveDataGroup(ids);
             for (Long long1 : ids) {
-                redisTemplate.delete("dataGroup"+long1.toString());
+                redisTemplate.delete("dataGroup" + long1.toString());
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

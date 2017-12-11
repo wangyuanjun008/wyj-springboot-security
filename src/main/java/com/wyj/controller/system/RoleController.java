@@ -7,12 +7,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
@@ -29,19 +28,13 @@ import com.wyj.service.system.RoleService;
  * @author：WangYuanJun
  * @date：2017年11月22日 下午8:25:35
  */
-@Controller
-@RequestMapping(value = "/role")
+@RestController
+@RequestMapping(value = "/remote/role")
 public class RoleController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private RoleService roleService;
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    private String index() {
-        return "/role/role";
-    }
-
-    @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public String query(@RequestParam(value = "offset", required = true, defaultValue = "1") Integer page, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer pageSize) {
         PageHelper.startPage(page, pageSize);
@@ -50,7 +43,6 @@ public class RoleController {
         return JSON.toJSONString(pageInfo.getList());
     }
 
-    @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public Retval save(Role Role) {
         Retval retval = Retval.newInstance();
@@ -67,7 +59,6 @@ public class RoleController {
         return retval;
     }
 
-    @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Retval edit(@PathVariable String id) {
         Retval retval = Retval.newInstance();
@@ -76,7 +67,6 @@ public class RoleController {
         return retval;
     }
     
-    @ResponseBody
     @RequestMapping(value="/remove",method=RequestMethod.POST)
     public Retval remove(@RequestParam Long[] ids){
         Retval retval = Retval.newInstance();
@@ -91,7 +81,6 @@ public class RoleController {
     }
     
     
-    @ResponseBody
     @RequestMapping(value = "/getAllRoles", method = RequestMethod.GET)
     public String list() {
         List<Role> Roles = roleService.list();
@@ -105,7 +94,6 @@ public class RoleController {
         return JSON.toJSONString(dataDtos);
     }
     
-    @ResponseBody
     @RequestMapping("/authorize")
     public int updateRoleAuthorization(@RequestParam Long[] menus,@RequestParam Long roleId) {
         List<Long> menuIds = new ArrayList<>();
