@@ -48,6 +48,9 @@
 			<if test="dataGroup != null and dataGroup.groupId != null">
 				dataGroupId = #{dataGroup.groupId}
 			</if>
+			<if test="dictCode != null">
+				dictCode = #{dictCode}
+			</if>			
 		</where>
 	</select>
 
