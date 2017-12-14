@@ -72,10 +72,10 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
-    public Retval remove(@RequestParam Long id) {
+    public Retval remove(@RequestParam Long[] ids) {
         Retval retval = Retval.newInstance();
         try {
-            menuService.remove(id);
+            menuService.batchRemoveMenu(ids);
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
