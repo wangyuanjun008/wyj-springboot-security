@@ -2,7 +2,9 @@ package com.wyj.controller.system;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.wyj.common.entity.DataDto;
 import com.wyj.common.entity.Retval;
 import com.wyj.entity.system.Role;
 import com.wyj.service.system.RoleService;
@@ -47,10 +48,10 @@ public class RoleController {
     public Retval save(Role Role) {
         Retval retval = Retval.newInstance();
         try {
-            if(Role.getRoleId() == null){
+            if (Role.getRoleId() == null) {
                 Role.setCreateTime(new Date());
                 roleService.save(Role);
-            }else{
+            } else {
                 roleService.update(Role);
             }
         } catch (Exception e) {
@@ -66,36 +67,37 @@ public class RoleController {
         retval.put("obj", Role);
         return retval;
     }
-    
-    @RequestMapping(value="/remove",method=RequestMethod.POST)
-    public Retval remove(@RequestParam Long[] ids){
+
+    @RequestMapping(value = "/remove", method = RequestMethod.POST)
+    public Retval remove(@RequestParam Long[] ids) {
         Retval retval = Retval.newInstance();
         try {
             roleService.batchRemoveRole(ids);
-            
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             retval.fail(e.getMessage());
         }
         return retval;
     }
-    
-    
+
     @RequestMapping(value = "/getAllRoles", method = RequestMethod.GET)
     public String list() {
         List<Role> Roles = roleService.list();
-        List<DataDto> dataDtos = new ArrayList<DataDto>();
+        List<Map<String, Object>> map1 = new ArrayList<Map<String, Object>>();
         for (Role role : Roles) {
-            DataDto dataDto = new DataDto();
-            dataDto.setId(role.getRoleId());
-            dataDto.setText(role.getRoleName());
-            dataDtos.add(dataDto);
+            String id = role.getRoleId().toString();
+            String text = role.getRoleName();
+            Map<String, Object> map3 = new HashMap<String, Object>();
+            map3.put("id", id);
+            map3.put("text", text);
+            map1.add(map3);
         }
-        return JSON.toJSONString(dataDtos);
+        return JSON.toJSONString(map1);
     }
-    
+
     @RequestMapping("/authorize")
-    public int updateRoleAuthorization(@RequestParam Long[] menus,@RequestParam Long roleId) {
+    public int updateRoleAuthorization(@RequestParam Long[] menus, @RequestParam Long roleId) {
         List<Long> menuIds = new ArrayList<>();
         for (int i = 0; i < menus.length; i++) {
             menuIds.add(menus[i]);
