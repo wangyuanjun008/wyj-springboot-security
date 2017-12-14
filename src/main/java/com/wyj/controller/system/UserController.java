@@ -1,5 +1,6 @@
 package com.wyj.controller.system;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
@@ -18,6 +20,7 @@ import com.wyj.common.annotation.SysLog;
 import com.wyj.common.entity.Retval;
 import com.wyj.entity.system.User;
 import com.wyj.service.system.UserService;
+import com.wyj.utils.ShiroUtils;
 
 /**
  * 用户Controller
@@ -79,7 +82,7 @@ public class UserController {
         return retval;
     }
 
-/*    @SysLog(action="修改密码")
+    @SysLog(action="修改密码")
     @ResponseBody
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public Retval updatePassword(String oldPassword, String newPassword) {
@@ -89,6 +92,6 @@ public class UserController {
         query.put("newPassword", newPassword);
         Retval retval = userService.updatePasswordByUser(query);
         return retval;
-    }*/
+    }
 
 }
