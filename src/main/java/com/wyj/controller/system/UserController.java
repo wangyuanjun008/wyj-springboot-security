@@ -2,6 +2,7 @@ package com.wyj.controller.system;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import com.github.pagehelper.PageInfo;
 import com.wyj.common.annotation.SysLog;
 import com.wyj.common.entity.Retval;
 import com.wyj.entity.system.User;
+import com.wyj.service.system.MenuService;
 import com.wyj.service.system.UserService;
 import com.wyj.utils.ShiroUtils;
 
@@ -32,10 +34,15 @@ import com.wyj.utils.ShiroUtils;
 @RestController
 @RequestMapping(value = "/remote/user")
 public class UserController {
+    
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MenuService menuService;
+    
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public String query(@RequestParam(value = "offset", required = true, defaultValue = "1") Integer page, @RequestParam(value = "limit", required = false, defaultValue = "10") Integer pageSize) {
         PageHelper.startPage(page, pageSize);
@@ -91,6 +98,21 @@ public class UserController {
         query.put("oldPassword", oldPassword);
         query.put("newPassword", newPassword);
         Retval retval = userService.updatePasswordByUser(query);
+        return retval;
+    }
+    
+    /**
+     * 获取当前登陆人的操作权限
+     * @return
+     */
+    @RequestMapping(value = "/perms")
+    public Retval getPermsByUserId() {
+        Retval retval = Retval.newInstance();
+        
+        //用户权限
+        Set<String> permsSet = menuService.listMenuPermsByUserId(ShiroUtils.getUserId());
+        retval.put("perms", permsSet);
+        
         return retval;
     }
 
