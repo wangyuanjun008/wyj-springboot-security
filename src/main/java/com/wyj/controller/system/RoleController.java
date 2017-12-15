@@ -32,7 +32,9 @@ import com.wyj.service.system.RoleService;
 @RestController
 @RequestMapping(value = "/remote/role")
 public class RoleController {
+    
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @Autowired
     private RoleService roleService;
 
@@ -81,6 +83,11 @@ public class RoleController {
         return retval;
     }
 
+    /**
+     * 展示权限树
+     * 
+     * @return
+     */
     @RequestMapping(value = "/getAllRoles", method = RequestMethod.GET)
     public String list() {
         List<Role> Roles = roleService.list();
@@ -96,6 +103,13 @@ public class RoleController {
         return JSON.toJSONString(map1);
     }
 
+    /**
+     * 保存操作权限
+     * 
+     * @param menus
+     * @param roleId
+     * @return
+     */
     @RequestMapping("/authorize")
     public int updateRoleAuthorization(@RequestParam Long[] menus, @RequestParam Long roleId) {
         List<Long> menuIds = new ArrayList<>();
