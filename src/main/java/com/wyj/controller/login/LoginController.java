@@ -1,4 +1,4 @@
-/*package com.wyj.controller.login;
+package com.wyj.controller.login;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -22,23 +22,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
-import com.wyj.annotation.SysLog;
-import com.wyj.entity.Retval;
+import com.wyj.common.annotation.SysLog;
+import com.wyj.common.entity.Retval;
 import com.wyj.entity.system.Menu;
+import com.wyj.entity.system.User;
 import com.wyj.service.system.MenuService;
+import com.wyj.service.system.UserService;
 import com.wyj.utils.ShiroUtils;
 
-*//**
+/**
  * 登录
  * 
  * 
  * @author：WangYuanJun
  * @date：2017年11月22日 下午8:25:35
- *//*
+ */
 @Controller
 public class LoginController {
 
@@ -48,40 +49,37 @@ public class LoginController {
     @Autowired
     private Producer producer;
 
-    @RequestMapping("/index")
-    public String index() {
-        return "login";
-    }
-
-    *//**
+    @Autowired
+    private UserService userService;
+    
+    /**
      * 验证码
      * 
      * @param response
      * @throws ServletException
      * @throws IOException
-     *//*
-    @RequestMapping("/captcha")
+     */
+    @RequestMapping("/remote/captcha")
     public void captcha(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws ServletException, IOException {
-         Expires过时期限值，指浏览器或缓存服务器在该时间点后必须从真正的服务器中获取新的页面信息 
+        // Expires过时期限值，指浏览器或缓存服务器在该时间点后必须从真正的服务器中获取新的页面信息
         response.setDateHeader("Expires", 0);
-         浏览器和缓存服务器都不应该缓存页面信息 
+        // 浏览器和缓存服务器都不应该缓存页面信息
         // response.setHeader("Cache-Control", "no-cache");
-         请求和响应的信息都不应该被存储在对方的磁盘系统中 
+        // 请求和响应的信息都不应该被存储在对方的磁盘系统中
         // response.setHeader("Cache-Control", "no-store");
-         浏览器和缓存服务器都可以缓存页面信息 
+        // 浏览器和缓存服务器都可以缓存页面信息
         // response.setHeader("Cache-Control", "public");
 
-         请求和响应的信息都不应该被存储在对方的磁盘系统中 
+        // 请求和响应的信息都不应该被存储在对方的磁盘系统中
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 
-         不让浏览器或中间缓存服务器缓存页面，配合Expires 置为0限定更保险 
+        // 不让浏览器或中间缓存服务器缓存页面，配合Expires 置为0限定更保险
         response.setHeader("Pragma", "no-cache");
 
         response.addHeader("Cache-Control", "post-check=0, pre-check=0");
 
-        
-         * response.setContentType(MIME)的作用是使客户端浏览器区分不同类型的数据， 并根据不同的MIME调用浏览器内部不同的程序嵌入模块来处理相应的数据
-         
+        // * response.setContentType(MIME)的作用是使客户端浏览器区分不同类型的数据， 并根据不同的MIME调用浏览器内部不同的程序嵌入模块来处理相应的数据
+
         response.setContentType("image/jpeg");
 
         // 生成文字验证码
@@ -100,23 +98,27 @@ public class LoginController {
         }
     }
 
-    @RequestMapping("/public")
-    public ModelAndView main() {
-        ModelAndView modelAndView = new ModelAndView("public");
+    /**
+     * 当前登陆人的菜单
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/remote/index")
+    public Retval getMenusByUserId() {
+        Retval retval = Retval.newInstance();
         List<Menu> menus = menuService.listAllMenuIdByUserId(ShiroUtils.getUserId());
-        modelAndView.addObject("menus", menus);
-        modelAndView.addObject("userName", ShiroUtils.getUserEntity().getName());
-        return modelAndView;
+        retval.put("menus", menus);
+        return retval;
     }
 
-    *//**
+    /**
      * 登录
      * 
      * @param user
      * @return
-     *//*
+     */
     @ResponseBody
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/remote/login", method = RequestMethod.POST)
     public Retval login(String userName, String password, String captcha, HttpServletRequest request) {
         Retval retval = Retval.newInstance();
         String kaptcha = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
@@ -129,7 +131,8 @@ public class LoginController {
         UsernamePasswordToken token = new UsernamePasswordToken(userName, password);
         try {
             subject.login(token);
-
+            User user = userService.getUserByUserName(userName);
+            retval.put("user", user);
         } catch (UnknownAccountException e) {
             retval.fail(e.getMessage());
             return retval;
@@ -147,16 +150,15 @@ public class LoginController {
         return retval;
     }
 
-    *//**
+    /**
      * 退出
-     *//*
-    @SysLog(action="退出登录")
+     */
+    @SysLog(action = "退出登录")
     @ResponseBody
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public Retval logout() {
         ShiroUtils.logout();
-        return Retval.newInstance() ;
+        return Retval.newInstance();
     }
-    
+
 }
-*/
