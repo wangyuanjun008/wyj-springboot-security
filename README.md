@@ -30,3 +30,18 @@ wyj-springboot-security是一个前后端分离的基础权限管理后台，前
 - 插入的方法用 save(推荐) 或 insert 做前缀
 - 删除的方法用 remove(推荐) 或 delete 做前缀
 - 修改的方法用 update 做前缀
+
+### 运行效果
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/log.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/homePage.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/user.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/user1.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/role.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/role1.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/role2.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/menu.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/auth1.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/dataGroup.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/dataDict.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/log.png)
+![image](https://github.com/wangyuanjun008/wyj-springboot-security/blob/master/images/updatePassword.png)
